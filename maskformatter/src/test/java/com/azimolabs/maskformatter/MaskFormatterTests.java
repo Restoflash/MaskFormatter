@@ -210,7 +210,7 @@ public class MaskFormatterTests {
 
     @Test
     public void testShouldSetProperInputTypeToTextWithDashesInMask() {
-        String mask = "123-456-7890";
+        String mask = "999-999-9999";
         filter = new MaskFormatter(mask, mockEditText, '-');
 
         reset(mockEditText);
