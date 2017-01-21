@@ -1,15 +1,12 @@
 package com.azimolabs.maskformatter;
 
-import android.text.Editable;
 import android.text.InputType;
 import android.widget.EditText;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -209,6 +206,30 @@ public class MaskFormatterTests {
         filter.afterTextChanged(null);
 
         verify(mockEditText, never()).setInputType(anyInt());
+    }
+
+    @Test
+    public void testShouldSetProperInputTypeToTextWithDashesInMask() {
+        String mask = "999-999-9999";
+        filter = new MaskFormatter(mask, mockEditText, '-');
+
+        reset(mockEditText);
+        String fieldCurrentValue = "1";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        // ---
+
+        reset(mockEditText);
+        fieldCurrentValue = "111-11-1111";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_NUMBER);
     }
 
 }
