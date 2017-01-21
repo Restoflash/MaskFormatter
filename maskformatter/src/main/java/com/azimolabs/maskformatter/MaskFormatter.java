@@ -23,6 +23,7 @@ public class MaskFormatter implements TextWatcher {
     public MaskFormatter(String mask, EditText maskedField) {
         this.mask = mask;
         this.maskedField = maskedField;
+        setInputTypeBasedOnMask();
     }
 
     @Override
