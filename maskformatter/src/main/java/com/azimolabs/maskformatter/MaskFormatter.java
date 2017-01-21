@@ -1,6 +1,8 @@
 package com.azimolabs.maskformatter;
 
+import android.os.Build;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
@@ -19,10 +21,26 @@ public class MaskFormatter implements TextWatcher {
     private int newIndex;
     private String textBefore;
     private int selectionBefore;
+    private int passwordMask;
 
     public MaskFormatter(String mask, EditText maskedField) {
         this.mask = mask;
         this.maskedField = maskedField;
+        this.passwordMask = getPasswordMask(maskedField);
+        setInputTypeBasedOnMask();
+    }
+
+    private int getPasswordMask(EditText maskedField) {
+        int inputType = maskedField.getInputType();
+        int maskedFieldPasswordMask = (inputType & InputType.TYPE_TEXT_VARIATION_PASSWORD
+            | inputType & InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            maskedFieldPasswordMask |= inputType & InputType.TYPE_NUMBER_VARIATION_PASSWORD;
+            maskedFieldPasswordMask |= inputType & InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD;
+        }
+
+        return maskedFieldPasswordMask;
     }
 
     @Override
@@ -138,7 +156,7 @@ public class MaskFormatter implements TextWatcher {
             return;
         }
 
-        maskedField.setInputType(CharInputType.getKeyboardTypeForNextChar(maskChar));
+        maskedField.setInputType(passwordMask | CharInputType.getKeyboardTypeForNextChar(maskChar));
     }
 
     private char getFirstNotWhiteCharFromMask() {

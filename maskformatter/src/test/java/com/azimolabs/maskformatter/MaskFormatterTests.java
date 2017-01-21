@@ -1,18 +1,16 @@
 package com.azimolabs.maskformatter;
 
-import android.text.Editable;
 import android.text.InputType;
 import android.widget.EditText;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -211,4 +209,46 @@ public class MaskFormatterTests {
         verify(mockEditText, never()).setInputType(anyInt());
     }
 
+    @Test
+    public void testShouldSetProperInputTypeToPassword() {
+        when(mockEditText.getInputType()).thenReturn(InputType.TYPE_TEXT_VARIATION_PASSWORD
+            | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+        String mask = "99 AAAA wwww wwww wwww wwww";
+        filter = new MaskFormatter(mask, mockEditText);
+
+        String fieldCurrentValue = "99";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD
+            | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+        // ---
+
+        fieldCurrentValue = "99 ABCD";
+        reset(mockEditText);
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD
+            | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+    }
+
+    @Test
+    public void testShouldSetProperInputTypeToNumberPassword() {
+        when(mockEditText.getInputType()).thenReturn(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        String mask = "999 99 9999";
+        filter = new MaskFormatter(mask, mockEditText);
+
+        String fieldCurrentValue = "123";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText, times(2)).setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    }
 }

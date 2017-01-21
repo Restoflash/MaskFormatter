@@ -14,22 +14,21 @@ public class MainActivity extends Activity {
 
     private static final String CHARS_MASK = "AAZZ aazz @@ww ##%%";
 
+    private static final String NUMBERS_MASKED_MASK = "999 99 9999";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText ibanField = (EditText) findViewById(R.id.etIban);
-        MaskFormatter ibanFormatter = new MaskFormatter(IBAN_MASK, ibanField);
-        ibanField.addTextChangedListener(ibanFormatter);
-
-        EditText numbersField = (EditText) findViewById(R.id.etNumbers);
-        MaskFormatter numbersFormatter = new MaskFormatter(NUMBERS_MASK, numbersField);
-        numbersField.addTextChangedListener(numbersFormatter);
-
-        EditText charsField = (EditText) findViewById(R.id.etChars);
-        MaskFormatter charsFormatter = new MaskFormatter(CHARS_MASK, charsField);
-        charsField.addTextChangedListener(charsFormatter);
+        setupEditText(R.id.etIban, IBAN_MASK);
+        setupEditText(R.id.etNumbers, NUMBERS_MASK);
+        setupEditText(R.id.etChars, CHARS_MASK);
+        setupEditText(R.id.ssnChars, NUMBERS_MASKED_MASK);
     }
 
+    private void setupEditText(int layoutId, String mask) {
+        EditText field = (EditText) findViewById(layoutId);
+        field.addTextChangedListener(new MaskFormatter(mask, field));
+    }
 }
