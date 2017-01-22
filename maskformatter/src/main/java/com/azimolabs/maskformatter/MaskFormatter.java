@@ -28,6 +28,7 @@ public class MaskFormatter implements TextWatcher {
         this.mask = mask;
         this.maskedField = maskedField;
         this.maskCharacter = maskCharacter;
+        setInputTypeBasedOnMask();
     }
 
     @Override
