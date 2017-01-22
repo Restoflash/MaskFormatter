@@ -16,6 +16,8 @@ public class MainActivity extends Activity {
 
     private static final String NUMBERS_MASKED_MASK = "999 99 9999";
 
+    private static final String NUMBERS_DASHED_MASK = "999-999-9999";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,10 +27,16 @@ public class MainActivity extends Activity {
         setupEditText(R.id.etNumbers, NUMBERS_MASK);
         setupEditText(R.id.etChars, CHARS_MASK);
         setupEditText(R.id.ssnChars, NUMBERS_MASKED_MASK);
+        setupEditTextWithDashes(R.id.etDashedNumbers, NUMBERS_DASHED_MASK);
     }
 
     private void setupEditText(int layoutId, String mask) {
         EditText field = (EditText) findViewById(layoutId);
         field.addTextChangedListener(new MaskFormatter(mask, field));
+    }
+
+    private void setupEditTextWithDashes(int layoutId, String mask) {
+        EditText field = (EditText) findViewById(layoutId);
+        field.addTextChangedListener(new MaskFormatter(mask, field, '-'));
     }
 }

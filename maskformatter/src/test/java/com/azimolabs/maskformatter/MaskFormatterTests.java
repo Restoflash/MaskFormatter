@@ -251,4 +251,28 @@ public class MaskFormatterTests {
 
         verify(mockEditText, times(2)).setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD);
     }
+
+    @Test
+    public void testShouldSetProperInputTypeToTextWithDashesInMask() {
+        String mask = "999-999-9999";
+        filter = new MaskFormatter(mask, mockEditText, '-');
+
+        reset(mockEditText);
+        String fieldCurrentValue = "1";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        // ---
+
+        reset(mockEditText);
+        fieldCurrentValue = "111-11-1111";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_NUMBER);
+    }
 }
