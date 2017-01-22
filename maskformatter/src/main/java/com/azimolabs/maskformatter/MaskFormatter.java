@@ -11,9 +11,9 @@ public class MaskFormatter implements TextWatcher {
 
     private static final char SPACE = ' ';
 
-    private String mask;
-
-    private EditText maskedField;
+    private final String mask;
+    private final EditText maskedField;
+    private final char maskCharacter;
 
     private boolean editTextChange;
     private int newIndex;
@@ -21,8 +21,13 @@ public class MaskFormatter implements TextWatcher {
     private int selectionBefore;
 
     public MaskFormatter(String mask, EditText maskedField) {
+        this(mask, maskedField, SPACE);
+    }
+
+    public MaskFormatter(String mask, EditText maskedField, char maskCharacter) {
         this.mask = mask;
         this.maskedField = maskedField;
+        this.maskCharacter = maskCharacter;
         setInputTypeBasedOnMask();
     }
 
@@ -78,7 +83,7 @@ public class MaskFormatter implements TextWatcher {
         }
 
         if (selectionBefore - 1 >= 0
-            && appliedMaskString.charAt(selectionBefore - 1) == SPACE) {
+            && appliedMaskString.charAt(selectionBefore - 1) == maskCharacter) {
             return selectionBefore - 1;
         }
 
@@ -90,7 +95,7 @@ public class MaskFormatter implements TextWatcher {
             return appliedMaskString.length();
         }
 
-        if (appliedMaskString.charAt(selectionBefore) == SPACE) {
+        if (appliedMaskString.charAt(selectionBefore) == maskCharacter) {
             return selectionBefore + 2;
         }
 
@@ -106,15 +111,15 @@ public class MaskFormatter implements TextWatcher {
     }
 
     private String applyMask(String newValue) throws InvalidTextException {
-        String newValueWithoutSpaces = newValue.replaceAll("\\s", "");
+        String newValueWithoutSpaces = newValue.replaceAll(String.valueOf(maskCharacter), "");
         StringBuilder sb = new StringBuilder();
         int index = 0;
         for (char c : newValueWithoutSpaces.toCharArray()) {
             if (index >= mask.length()) {
                 throw new InvalidTextException();
             }
-            while (mask.charAt(index) == SPACE) {
-                sb.append(SPACE);
+            while (mask.charAt(index) == maskCharacter) {
+                sb.append(maskCharacter);
                 index++;
             }
             sb.append(applyMaskToChar(c, index));
@@ -135,7 +140,7 @@ public class MaskFormatter implements TextWatcher {
         }
 
         char maskChar = getFirstNotWhiteCharFromMask();
-        if (maskChar == SPACE) {
+        if (maskChar == maskCharacter) {
             return;
         }
 
@@ -144,14 +149,13 @@ public class MaskFormatter implements TextWatcher {
 
     private char getFirstNotWhiteCharFromMask() {
         int maskIndex = maskedField.getSelectionEnd();
-        while (maskIndex < mask.length() && mask.charAt(maskIndex) == SPACE) {
+        while (maskIndex < mask.length() && mask.charAt(maskIndex) == maskCharacter) {
             maskIndex++;
         }
         return mask.charAt(maskIndex);
     }
 
     public String getRawTextValue() {
-        return maskedField.getText().toString().replaceAll("\\s", "");
+        return maskedField.getText().toString().replaceAll(String.valueOf(maskCharacter), "");
     }
-
 }
