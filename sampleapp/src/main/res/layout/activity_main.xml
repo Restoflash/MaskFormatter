@@ -50,6 +50,19 @@
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/margin_small"
         android:paddingTop="@dimen/margin_small"
+        android:text="@string/password_mask_hint"/>
+
+    <EditText
+        android:id="@+id/ssnChars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text|textNoSuggestions|numberPassword"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_small"
+        android:paddingTop="@dimen/margin_small"
         android:text="@string/numbers_dashes_mask_hint"/>
 
     <EditText
@@ -57,5 +70,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text|textNoSuggestions"/>
-
 </LinearLayout>

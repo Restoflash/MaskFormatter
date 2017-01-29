@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -209,6 +210,49 @@ public class MaskFormatterTests {
     }
 
     @Test
+    public void testShouldSetProperInputTypeToPassword() {
+        when(mockEditText.getInputType()).thenReturn(InputType.TYPE_TEXT_VARIATION_PASSWORD
+            | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+        String mask = "99 AAAA wwww wwww wwww wwww";
+        filter = new MaskFormatter(mask, mockEditText);
+
+        String fieldCurrentValue = "99";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD
+            | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+        // ---
+
+        fieldCurrentValue = "99 ABCD";
+        reset(mockEditText);
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText).setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD
+            | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+    }
+
+    @Test
+    public void testShouldSetProperInputTypeToNumberPassword() {
+        when(mockEditText.getInputType()).thenReturn(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        String mask = "999 99 9999";
+        filter = new MaskFormatter(mask, mockEditText);
+
+        String fieldCurrentValue = "123";
+        when(mockEditText.getSelectionEnd()).thenReturn(fieldCurrentValue.length());
+
+        filter.afterTextChanged(null);
+
+        verify(mockEditText, times(2)).setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    }
+
+    @Test
     public void testShouldSetProperInputTypeToTextWithDashesInMask() {
         String mask = "999-999-9999";
         filter = new MaskFormatter(mask, mockEditText, '-');
@@ -231,5 +275,4 @@ public class MaskFormatterTests {
 
         verify(mockEditText).setInputType(InputType.TYPE_CLASS_NUMBER);
     }
-
 }
