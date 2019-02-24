@@ -160,8 +160,11 @@ public class MaskFormatter implements TextWatcher {
         if (maskChar == maskCharacter) {
             return;
         }
-
-        maskedField.setInputType(passwordMask | CharInputType.getKeyboardTypeForNextChar(maskChar));
+        int inputType = passwordMask | CharInputType.getKeyboardTypeForNextChar(maskChar);
+        if(maskedField.getInputType() == inputType){
+            return;
+        }
+        maskedField.setInputType(inputType);
     }
 
     private char getFirstNotWhiteCharFromMask() {
